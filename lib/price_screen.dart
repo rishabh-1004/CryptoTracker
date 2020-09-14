@@ -11,7 +11,8 @@ class PriceScreen extends StatefulWidget {
 
 class _PriceScreenState extends State<PriceScreen> {
   String selectedCurrency = "USD";
-  double rateBTC = 0.0;
+  double rate = 0.0;
+  List<String> rateChart = ['?', '?', '?'];
 
   DropdownButton<String> menuItemsAndroid() {
     List<DropdownMenuItem<String>> menuItems = [];
@@ -31,7 +32,7 @@ class _PriceScreenState extends State<PriceScreen> {
       onChanged: (value) {
         setState(() {
           selectedCurrency = value;
-          updateUI();
+          networkCall();
         });
       },
     );
@@ -49,17 +50,19 @@ class _PriceScreenState extends State<PriceScreen> {
       onSelectedItemChanged: (selectedIndex) {
         setState(() {
           selectedCurrency = currenciesList[selectedIndex];
-          updateUI();
+          networkCall();
         });
       },
     );
   }
 
-  updateUI() async {
+  networkCall() async {
     CoinData coins = CoinData();
-    var response = await coins.getCoinData(selectedCurrency);
+    var response = await coins.getallCryptoData(selectedCurrency);
     setState(() {
-      rate = response['rate'];
+      rateChart[0] = response[0];
+      rateChart[1] = response[1];
+      rateChart[2] = response[2];
     });
   }
 
@@ -85,7 +88,7 @@ class _PriceScreenState extends State<PriceScreen> {
                 margin: EdgeInsets.fromLTRB(20, 15, 20, 0),
                 child: Center(
                   child: Text(
-                    '1 BTC = $rate $selectedCurrency',
+                    '1 BTC = ${rateChart[0]} $selectedCurrency',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20,
@@ -103,7 +106,7 @@ class _PriceScreenState extends State<PriceScreen> {
                 margin: EdgeInsets.fromLTRB(20, 15, 20, 0),
                 child: Center(
                   child: Text(
-                    '1 ETH = $rate $selectedCurrency',
+                    '1 ETH = ${rateChart[1]} $selectedCurrency',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20,
@@ -121,7 +124,7 @@ class _PriceScreenState extends State<PriceScreen> {
                 margin: EdgeInsets.fromLTRB(20, 15, 20, 0),
                 child: Center(
                   child: Text(
-                    '1 LTC = $rate $selectedCurrency',
+                    '1 LTC = ${rateChart[2]} $selectedCurrency',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20,
